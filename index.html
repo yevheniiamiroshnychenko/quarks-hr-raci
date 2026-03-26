@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RACI Matrix — HR Team 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a18; padding: 32px 24px; }
+
+.top-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.top-header-left h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+.top-header-left p { font-size: 13px; color: #888780; }
+
+.raci-legend { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.raci-pill { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.raci-pill.r { background: #E6F1FB; color: #0C447C; }
+.raci-pill.a { background: #FAEEDA; color: #633806; }
+.raci-pill.c { background: #EAF3DE; color: #27500A; }
+.raci-pill.i { background: #FBEAF0; color: #72243E; }
+.dot { width: 7px; height: 7px; border-radius: 50%; display:inline-block; }
+.raci-pill.r .dot { background: #378ADD; }
+.raci-pill.a .dot { background: #BA7517; }
+.raci-pill.c .dot { background: #639922; }
+.raci-pill.i .dot { background: #D4537E; }
+
+.toolbar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.filter-btn { padding: 5px 14px; border: 0.5px solid #b4b2a9; border-radius: 20px; background: #fff; font-size: 12px; color: #5f5e5a; cursor: pointer; }
+.filter-btn:hover { background: #f1efe8; }
+.filter-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; }
+.add-section-btn { margin-left: auto; padding: 6px 14px; border: 0.5px solid #b4b2a9; border-radius: 8px; background: #fff; font-size: 12px; color: #2c2c2a; cursor: pointer; }
+.add-section-btn:hover { background: #f1efe8; }
+
+.section { margin-bottom: 28px; }
+.section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.section-title-edit { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: #888780; border: none; background: transparent; outline: none; cursor: text; padding: 2px 6px; border-radius: 4px; }
+.section-title-edit:hover { background: #f1efe8; }
+.section-title-edit:focus { background: #e8f0fb; color: #2c2c2a; }
+.add-row-btn { font-size: 11px; color: #888780; background: none; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; }
+.add-row-btn:hover { background: #f1efe8; color: #2c2c2a; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 0.5px solid #d3d1c7; table-layout: fixed; }
+thead tr { background: #f1efe8; }
+th { padding: 11px 8px; font-size: 13px; font-weight: 500; text-align: center; color: #5f5e5a; border-bottom: 0.5px solid #d3d1c7; }
+th.task-col { text-align: left; padding-left: 14px; width: 210px; }
+th.period-col { width: 80px; font-size: 11px; color: #888780; }
+th.r-col { color: #0C447C; background: #EAF3FA; width: 120px; }
+th.a-col { color: #633806; background: #FEF6E8; width: 150px; }
+th.c-col { color: #27500A; background: #F1F8E8; width: 150px; }
+th.i-col { color: #72243E; background: #FCF0F5; width: 150px; }
+th.del-col { width: 32px; }
+
+td { padding: 0; border-bottom: 0.5px solid #f1efe8; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafaf8; }
+
+.task-cell { display: flex; align-items: center; padding: 8px 6px 8px 14px; }
+.task-input { border: none; background: transparent; font-size: 13px; color: #2c2c2a; width: 100%; outline: none; padding: 3px 5px; border-radius: 4px; }
+.task-input:hover { background: #f1efe8; }
+.task-input:focus { background: #e8f0fb; }
+
+.period-cell { text-align: center; padding: 6px 4px; }
+.period-select { border: none; font-size: 11px; font-weight: 500; cursor: pointer; padding: 3px 6px; border-radius: 20px; outline: none; appearance: none; -webkit-appearance: none; text-align: center; background: #f1efe8; color: #5f5e5a; width: 72px; }
+.period-select.done { background: #EAF3DE; color: #27500A; }
+.period-select.h1 { background: #E6F1FB; color: #0C447C; }
+.period-select.q1 { background: #E6F1FB; color: #0C447C; }
+.period-select.q2 { background: #FAEEDA; color: #633806; }
+.period-select.h2 { background: #FBEAF0; color: #72243E; }
+.period-select.y2026 { background: #f1efe8; color: #5f5e5a; }
+.period-select.empty { background: transparent; color: #b4b2a9; }
+
+.r-cell { padding: 6px 8px; text-align: center; }
+.r-select { border: none; font-size: 12px; font-weight: 500; cursor: pointer; padding: 5px 8px; border-radius: 20px; outline: none; appearance: none; -webkit-appearance: none; background: #E6F1FB; color: #0C447C; width: 100%; text-align: center; }
+.r-select.empty { background: transparent; color: #b4b2a9; }
+
+.multi-cell { padding: 5px 8px; min-height: 42px; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; min-height: 30px; padding: 2px; border-radius: 6px; }
+.chips-wrap:hover { background: #f5f4f0; }
+.chip { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.chip-a { background: #FAEEDA; color: #633806; }
+.chip-c { background: #EAF3DE; color: #27500A; }
+.chip-i { background: #FBEAF0; color: #72243E; }
+.chip-x { font-size: 10px; opacity: 0.6; cursor: pointer; margin-left: 1px; }
+.chip-x:hover { opacity: 1; }
+.add-chip-btn { font-size: 18px; color: #b4b2a9; line-height: 1; padding: 0 2px; cursor: pointer; }
+.add-chip-btn:hover { color: #2c2c2a; }
+
+.del-cell { text-align: center; padding: 4px; }
+.del-btn { opacity: 0; background: none; border: none; cursor: pointer; color: #b4b2a9; font-size: 13px; padding: 4px 6px; border-radius: 4px; }
+tr:hover .del-btn { opacity: 1; }
+.del-btn:hover { color: #E24B4A; background: #FCEBEB; }
+
+.popover-overlay { display: none; position: fixed; inset: 0; z-index: 40; }
+.popover-overlay.open { display: block; }
+.popover { position: fixed; background: #fff; border: 0.5px solid #d3d1c7; border-radius: 10px; padding: 8px; min-width: 170px; z-index: 50; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.popover-option { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.popover-option:hover { background: #f1efe8; }
+.pop-av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; flex-shrink: 0; }
+.av-yev { background: #AFA9EC; color: #26215C; }
+.av-ole { background: #5DCAA5; color: #04342C; }
+.av-ale { background: #85B7EB; color: #042C53; }
+.av-ali { background: #F0997B; color: #4A1B0C; }
+.av-kat { background: #FAC775; color: #412402; }
+.av-mgr { background: #D3D1C7; color: #2C2C2A; }
+.pop-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d3d1c7; margin-left: auto; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.pop-check.on { background: #2c2c2a; border-color: #2c2c2a; color: #fff; }
+
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 60; align-items: center; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 14px; padding: 24px; width: 320px; border: 0.5px solid #d3d1c7; }
+.modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 14px; }
+.modal label { font-size: 12px; color: #5f5e5a; display: block; margin-bottom: 4px; margin-top: 12px; }
+.modal input { width: 100%; padding: 8px 10px; border: 0.5px solid #b4b2a9; border-radius: 8px; font-size: 13px; outline: none; }
+.modal input:focus { border-color: #378ADD; }
+.modal-btns { display: flex; gap: 8px; margin-top: 18px; justify-content: flex-end; }
+.modal-btns button { padding: 7px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 0.5px solid #b4b2a9; background: #fff; }
+.modal-btns .ok { background: #2c2c2a; color: #fff; border-color: #2c2c2a; }
+
+footer { font-size: 11px; color: #b4b2a9; margin-top: 32px; }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="top-header-left">
+    <h1>RACI Matrix — HR Team 2026</h1>
+    <p>Quarks · розподіл відповідальності по проєктах</p>
+  </div>
+  <div class="raci-legend">
+    <div class="raci-pill r"><span class="dot"></span>R — виконавець</div>
+    <div class="raci-pill a"><span class="dot"></span>A — відповідальний</div>
+    <div class="raci-pill c"><span class="dot"></span>C — консультує</div>
+    <div class="raci-pill i"><span class="dot"></span>I — проінформований</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="filter-btn active" onclick="setFilter('all',this)">Всі</button>
+  <button class="filter-btn" onclick="setFilter('ai',this)">AI</button>
+  <button class="filter-btn" onclick="setFilter('ld',this)">L&D</button>
+  <button class="filter-btn" onclick="setFilter('growth',this)">Growth Hub</button>
+  <button class="filter-btn" onclick="setFilter('pr',this)">PR & Compensation</button>
+  <button class="filter-btn" onclick="setFilter('metrics',this)">People Metrics</button>
+  <button class="add-section-btn" onclick="openSecModal()">+ Новий трек</button>
+</div>
+
+<div id="app"></div>
+<footer>Оновлено: березень 2026 · Quarks HR Team</footer>
+
+<div class="popover-overlay" id="pop-overlay" onclick="closePopover()"></div>
+<div class="popover" id="popover" style="display:none"></div>
+
+<div class="overlay" id="sec-modal">
+  <div class="modal">
+    <h3>Новий трек</h3>
+    <label>Назва треку</label>
+    <input id="sec-name" type="text" placeholder="Наприклад: Recruitment" />
+    <div class="modal-btns">
+      <button onclick="closeSecModal()">Скасувати</button>
+      <button class="ok" onclick="addSection()">Додати</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="row-modal">
+  <div class="modal">
+    <h3>Новий проєкт</h3>
+    <label>Назва</label>
+    <input id="row-name" type="text" placeholder="Наприклад: Onboarding redesign" />
+    <div class="modal-btns">
+      <button onclick="closeRowModal()">Скасувати</button>
+      <button class="ok" onclick="addRow()">Додати</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PEOPLE = [
+  { key:'yev', label:'Євгенія',   cls:'av-yev', init:'Є'  },
+  { key:'ole', label:'Олена',     cls:'av-ole', init:'О'  },
+  { key:'ale', label:'Олексій',   cls:'av-ale', init:'Ол' },
+  { key:'ali', label:'Аліна',     cls:'av-ali', init:'А'  },
+  { key:'kat', label:'Катерина',  cls:'av-kat', init:'К'  },
+  { key:'mgr', label:'Менеджери', cls:'av-mgr', init:'М'  },
+];
+
+const PERIODS = ['', 'Q1', 'Q2', 'H1', 'H2', 'Y2026', 'DONE'];
+const PERIOD_CLS = { 'Q1':'q1','Q2':'q2','H1':'h1','H2':'h2','Y2026':'y2026','DONE':'done','':"empty" };
+
+const emptyRow = (task='') => ({ task, period:'', r:'', a:[], c:[], i:[] });
+
+let data = [
+  { id:'ai', title:'AI', rows:[
+    { task:'AI-інструменти в HR',               period:'H2',   r:'ale', a:['yev'], c:[],           i:['kat','mgr'] },
+  ]},
+  { id:'ld', title:'L&D', rows:[
+    { task:'L&D стратегія 2026',                period:'DONE', r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Competency matrix для менеджерів',  period:'Q1',   r:'ole', a:['yev'], c:['kat','mgr'], i:[] },
+    { task:'L&D програма для менеджерів',       period:'Q2',   r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Менторська програма',               period:'Q2',   r:'ali', a:['yev'], c:['mgr'],       i:['kat'] },
+  ]},
+  { id:'growth', title:'Growth Hub', rows:[
+    { task:'Перехід на нову платформу',         period:'Q1',   r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
+    { task:'Матриця ключових ролей',            period:'Q2',   r:'yev', a:['kat'], c:['mgr'],       i:[] },
+    { task:'Матриця менеджерів + грейди',       period:'Q2',   r:'ole', a:['yev'], c:['mgr'],       i:['kat'] },
+    { task:'Оновлення Performance Cycle',       period:'Q2',   r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Salary philosophy',                 period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Аналіз compa ratio',                period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Карта мотивації співробітників',    period:'Q2',   r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
+  ]},
+  { id:'pr', title:'PR & Compensation', rows:[
+    { task:'Culture fit блок',                  period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Метрики performance review',        period:'Q2',   r:'ole', a:['yev'], c:[],            i:['kat','mgr'] },
+    { task:'Інструменти performance review',    period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
+    { task:'Performance Upgrade',               period:'Q2',   r:'ole', a:['yev'], c:['kat','mgr'], i:[] },
+  ]},
+  { id:'metrics', title:'People Metrics', rows:[
+    { task:'eNPS — моніторинг та аналіз',       period:'Y2026',r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
+    { task:'Employee Retention ≥92%',           period:'Y2026',r:'yev', a:['kat'], c:['ole','ali'], i:['mgr'] },
+    { task:'Probation Success Rate ≥85%',       period:'Y2026',r:'ali', a:['yev'], c:[],            i:['kat','mgr'] },
+    { task:'HR health matrix',                  period:'Q2',   r:'ale', a:['yev'], c:['kat'],       i:['mgr'] },
+  ]},
+];
+
+let currentFilter = 'all';
+let pendingRowSIdx = null;
+let popoverCtx = null;
+
+function personByKey(k) { return PEOPLE.find(p => p.key === k); }
+
+function renderChips(arr, role, si, ri) {
+  const chipCls = { a:'chip-a', c:'chip-c', i:'chip-i' }[role];
+  let html = '';
+  arr.forEach((k, idx) => {
+    const p = personByKey(k);
+    if (!p) return;
+    html += `<span class="chip ${chipCls}">${p.label}<span class="chip-x" onclick="removeChip(event,${si},${ri},'${role}',${idx})">✕</span></span>`;
+  });
+  html += `<span class="add-chip-btn" onclick="openPopover(event,${si},${ri},'${role}')">+</span>`;
+  return html;
+}
+
+function buildRow(si, ri, row) {
+  let rOpts = `<option value="">—</option>`;
+  PEOPLE.forEach(p => { rOpts += `<option value="${p.key}" ${row.r===p.key?'selected':''}>${p.label}</option>`; });
+
+  let pOpts = PERIODS.map(p => `<option value="${p}" ${row.period===p?'selected':''}>${p||'—'}</option>`).join('');
+  const pc = PERIOD_CLS[row.period] || 'empty';
+
+  return `<tr>
+    <td><div class="task-cell"><input class="task-input" value="${esc(row.task)}" oninput="data[${si}].rows[${ri}].task=this.value" placeholder="Проєкт…"/></div></td>
+    <td class="period-cell"><select class="period-select ${pc}" onchange="setPeriod(${si},${ri},this.value,this)">${pOpts}</select></td>
+    <td class="r-cell"><select class="r-select ${row.r?'':'empty'}" onchange="setR(${si},${ri},this.value,this)">${rOpts}</select></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-a">${renderChips(row.a,'a',si,ri)}</div></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-c">${renderChips(row.c,'c',si,ri)}</div></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-i">${renderChips(row.i,'i',si,ri)}</div></td>
+    <td class="del-cell"><button class="del-btn" onclick="delRow(${si},${ri})">✕</button></td>
+  </tr>`;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  data.forEach((sec, si) => {
+    if (currentFilter !== 'all' && sec.id !== currentFilter) return;
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.dataset.section = sec.id;
+    const rows = sec.rows.map((row, ri) => buildRow(si, ri, row)).join('');
+    div.innerHTML = `
+      <div class="section-header">
+        <input class="section-title-edit" value="${esc(sec.title)}" oninput="data[${si}].title=this.value" />
+        <button class="add-row-btn" onclick="openRowModal(${si})">+ проєкт</button>
+      </div>
+      <table>
+        <thead><tr>
+          <th class="task-col">Проєкт</th>
+          <th class="period-col">Період</th>
+          <th class="r-col">R — виконавець</th>
+          <th class="a-col">A — відповідальний</th>
+          <th class="c-col">C — консультує</th>
+          <th class="i-col">I — проінформований</th>
+          <th class="del-col"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    app.appendChild(div);
+  });
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function setPeriod(si, ri, val, sel) {
+  data[si].rows[ri].period = val;
+  sel.className = `period-select ${PERIOD_CLS[val]||'empty'}`;
+}
+
+function setR(si, ri, val, sel) {
+  data[si].rows[ri].r = val;
+  sel.className = 'r-select' + (val ? '' : ' empty');
+}
+
+function removeChip(e, si, ri, role, idx) {
+  e.stopPropagation();
+  data[si].rows[ri][role].splice(idx, 1);
+  const wrap = document.getElementById(`chips-${si}-${ri}-${role}`);
+  if (wrap) wrap.innerHTML = renderChips(data[si].rows[ri][role], role, si, ri);
+}
+
+function openPopover(e, si, ri, role) {
+  e.stopPropagation();
+  popoverCtx = { si, ri, role };
+  const pop = document.getElementById('popover');
+  renderPopover();
+  const rect = e.target.getBoundingClientRect();
+  pop.style.display = 'block';
+  pop.style.top = (rect.bottom + 4) + 'px';
+  pop.style.left = Math.min(rect.left, window.innerWidth - 190) + 'px';
+  document.getElementById('pop-overlay').classList.add('open');
+}
+
+function renderPopover() {
+  if (!popoverCtx) return;
+  const { si, ri, role } = popoverCtx;
+  const current = data[si].rows[ri][role];
+  document.getElementById('popover').innerHTML = PEOPLE.map(p => {
+    const sel = current.includes(p.key);
+    return `<div class="popover-option" onclick="toggleChip('${p.key}')">
+      <div class="pop-av ${p.cls}">${p.init}</div>
+      <span>${p.label}</span>
+      <div class="pop-check ${sel?'on':''}">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleChip(key) {
+  if (!popoverCtx) return;
+  const { si, ri, role } = popoverCtx;
+  const arr = data[si].rows[ri][role];
+  const idx = arr.indexOf(key);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(key);
+  renderPopover();
+  const wrap = document.getElementById(`chips-${si}-${ri}-${role}`);
+  if (wrap) wrap.innerHTML = renderChips(arr, role, si, ri);
+}
+
+function closePopover() {
+  document.getElementById('popover').style.display = 'none';
+  document.getElementById('pop-overlay').classList.remove('open');
+  popoverCtx = null;
+}
+
+function delRow(si, ri) { data[si].rows.splice(ri, 1); render(); }
+
+function setFilter(key, btn) {
+  currentFilter = key;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function openSecModal() { document.getElementById('sec-name').value=''; document.getElementById('sec-modal').classList.add('open'); }
+function closeSecModal() { document.getElementById('sec-modal').classList.remove('open'); }
+function addSection() {
+  const name = document.getElementById('sec-name').value.trim();
+  if (!name) return;
+  data.push({ id:'sec_'+Date.now(), title:name, rows:[emptyRow('Новий проєкт')] });
+  closeSecModal();
+  setFilter('all', document.querySelector('.filter-btn'));
+}
+
+function openRowModal(si) { pendingRowSIdx=si; document.getElementById('row-name').value=''; document.getElementById('row-modal').classList.add('open'); }
+function closeRowModal() { document.getElementById('row-modal').classList.remove('open'); }
+function addRow() {
+  const name = document.getElementById('row-name').value.trim() || 'Новий проєкт';
+  data[pendingRowSIdx].rows.push(emptyRow(name));
+  closeRowModal();
+  render();
+}
+
+document.getElementById('sec-modal').addEventListener('click', e => { if(e.target===document.getElementById('sec-modal')) closeSecModal(); });
+document.getElementById('row-modal').addEventListener('click', e => { if(e.target===document.getElementById('row-modal')) closeRowModal(); });
+
+render();
+</script>
+</body>
+</html>
