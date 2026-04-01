@@ -1,122 +1,193 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RACI Matrix — HR Team 2026</title>
 <style>
+:root {
+  --bg: #f8f7f4; --bg2: #fff; --bg3: #f1efe8; --bg4: #e8e6df;
+  --text: #1a1a18; --text2: #5f5e5a; --text3: #888780; --text4: #b4b2a9;
+  --border: #d3d1c7; --border2: #e8e6df;
+  --r-bg: #E6F1FB; --r-text: #0C447C;
+  --a-bg: #FAEEDA; --a-text: #633806;
+  --c-bg: #EAF3DE; --c-text: #27500A;
+  --i-bg: #FBEAF0; --i-text: #72243E;
+  --done-bg: #EAF3DE; --done-text: #27500A;
+  --prog-bg: #FAEEDA; --prog-text: #633806;
+  --ns-bg: #f1efe8; --ns-text: #888780;
+}
+[data-theme="dark"] {
+  --bg: #1a1a18; --bg2: #2c2c2a; --bg3: #3a3a37; --bg4: #444441;
+  --text: #f1efe8; --text2: #b4b2a9; --text3: #888780; --text4: #5f5e5a;
+  --border: #444441; --border2: #3a3a37;
+  --r-bg: #0C447C; --r-text: #B5D4F4;
+  --a-bg: #412402; --a-text: #FAC775;
+  --c-bg: #173404; --c-text: #C0DD97;
+  --i-bg: #4B1528; --i-text: #F4C0D1;
+  --done-bg: #173404; --done-text: #C0DD97;
+  --prog-bg: #412402; --prog-text: #FAC775;
+  --ns-bg: #3a3a37; --ns-text: #888780;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a18; padding: 32px 24px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 24px; transition: background 0.2s, color 0.2s; }
 
-.top-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-.top-header-left h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
-.top-header-left p { font-size: 13px; color: #888780; }
+.top-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.top-header-left h1 { font-size: 20px; font-weight: 500; margin-bottom: 2px; }
+.top-header-left p { font-size: 12px; color: var(--text3); }
+.header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-.raci-legend { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.raci-pill { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-.raci-pill.r { background: #E6F1FB; color: #0C447C; }
-.raci-pill.a { background: #FAEEDA; color: #633806; }
-.raci-pill.c { background: #EAF3DE; color: #27500A; }
-.raci-pill.i { background: #FBEAF0; color: #72243E; }
-.dot { width: 7px; height: 7px; border-radius: 50%; display:inline-block; }
+.raci-legend { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.raci-pill { display: flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.raci-pill.r { background: var(--r-bg); color: var(--r-text); }
+.raci-pill.a { background: var(--a-bg); color: var(--a-text); }
+.raci-pill.c { background: var(--c-bg); color: var(--c-text); }
+.raci-pill.i { background: var(--i-bg); color: var(--i-text); }
+.dot { width: 6px; height: 6px; border-radius: 50%; display:inline-block; }
 .raci-pill.r .dot { background: #378ADD; }
 .raci-pill.a .dot { background: #BA7517; }
 .raci-pill.c .dot { background: #639922; }
 .raci-pill.i .dot { background: #D4537E; }
 
-.toolbar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.filter-btn { padding: 5px 14px; border: 0.5px solid #b4b2a9; border-radius: 20px; background: #fff; font-size: 12px; color: #5f5e5a; cursor: pointer; }
-.filter-btn:hover { background: #f1efe8; }
-.filter-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; }
-.add-section-btn { margin-left: auto; padding: 6px 14px; border: 0.5px solid #b4b2a9; border-radius: 8px; background: #fff; font-size: 12px; color: #2c2c2a; cursor: pointer; }
-.add-section-btn:hover { background: #f1efe8; }
+.icon-btn { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.icon-btn:hover { background: var(--bg3); }
+.icon-btn.active { background: var(--text); color: var(--bg2); border-color: var(--text); }
 
-.section { margin-bottom: 28px; }
-.section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.section-title-edit { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: #888780; border: none; background: transparent; outline: none; cursor: text; padding: 2px 6px; border-radius: 4px; }
-.section-title-edit:hover { background: #f1efe8; }
-.section-title-edit:focus { background: #e8f0fb; color: #2c2c2a; }
-.add-row-btn { font-size: 11px; color: #888780; background: none; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; }
-.add-row-btn:hover { background: #f1efe8; color: #2c2c2a; }
+.search-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.search-input { flex: 1; max-width: 300px; padding: 7px 12px; border: 0.5px solid var(--border); border-radius: 20px; background: var(--bg2); color: var(--text); font-size: 13px; outline: none; }
+.search-input:focus { border-color: #378ADD; }
+.search-input::placeholder { color: var(--text4); }
+.update-label { font-size: 11px; color: var(--text4); margin-left: auto; }
 
-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 0.5px solid #d3d1c7; table-layout: fixed; }
-thead tr { background: #f1efe8; }
-th { padding: 11px 8px; font-size: 13px; font-weight: 500; text-align: center; color: #5f5e5a; border-bottom: 0.5px solid #d3d1c7; }
-th.task-col { text-align: left; padding-left: 14px; width: 210px; }
-th.period-col { width: 80px; font-size: 11px; color: #888780; }
-th.r-col { color: #0C447C; background: #EAF3FA; width: 120px; }
-th.a-col { color: #633806; background: #FEF6E8; width: 150px; }
-th.c-col { color: #27500A; background: #F1F8E8; width: 150px; }
-th.i-col { color: #72243E; background: #FCF0F5; width: 150px; }
-th.del-col { width: 32px; }
+.toolbar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filter-btn { padding: 5px 12px; border: 0.5px solid var(--border); border-radius: 20px; background: var(--bg2); font-size: 12px; color: var(--text2); cursor: pointer; }
+.filter-btn:hover { background: var(--bg3); }
+.filter-btn.active { background: var(--text); color: var(--bg2); border-color: var(--text); }
+.toolbar-right { margin-left: auto; display: flex; gap: 6px; }
 
-td { padding: 0; border-bottom: 0.5px solid #f1efe8; vertical-align: middle; }
+/* People load */
+.people-load { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 16px; background: var(--bg2); border-radius: 12px; border: 0.5px solid var(--border); }
+.person-load { display: flex; align-items: center; gap: 6px; }
+.pl-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 500; flex-shrink: 0; }
+.pl-name { font-size: 11px; color: var(--text2); }
+.pl-count { font-size: 10px; color: var(--text4); }
+.pl-bar { width: 40px; height: 4px; border-radius: 2px; background: var(--bg3); overflow: hidden; }
+.pl-fill { height: 100%; border-radius: 2px; background: #378ADD; transition: width 0.3s; }
+.pl-fill.warn { background: #BA7517; }
+.pl-fill.over { background: #E24B4A; }
+
+.section { margin-bottom: 24px; }
+.section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.section-title-edit { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); border: none; background: transparent; outline: none; cursor: text; padding: 2px 6px; border-radius: 4px; }
+.section-title-edit:hover { background: var(--bg3); }
+.section-title-edit:focus { background: var(--bg3); color: var(--text); }
+.add-row-btn { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 8px; border-radius: 4px; }
+.add-row-btn:hover { background: var(--bg3); color: var(--text); }
+.progress-wrap { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.progress-bar { width: 80px; height: 5px; border-radius: 3px; background: var(--bg3); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: #639922; transition: width 0.3s; }
+.progress-label { font-size: 10px; color: var(--text3); white-space: nowrap; }
+
+.table-wrap { width: 100%; overflow-x: auto; }
+table { width: 100%; min-width: 960px; border-collapse: collapse; background: var(--bg2); border-radius: 12px; overflow: hidden; border: 0.5px solid var(--border); table-layout: fixed; }
+thead tr { background: var(--bg3); }
+th { padding: 9px 7px; font-size: 11px; font-weight: 500; text-align: center; color: var(--text3); border-bottom: 0.5px solid var(--border); }
+th.project-col { text-align: left; padding-left: 14px; width: 185px; }
+th.period-col { width: 76px; }
+th.status-col { width: 108px; }
+th.r-col { color: var(--r-text); background: var(--r-bg); width: 115px; opacity: 0.9; }
+th.a-col { color: var(--a-text); background: var(--a-bg); width: 135px; opacity: 0.9; }
+th.c-col { color: var(--c-text); background: var(--c-bg); width: 135px; opacity: 0.9; }
+th.i-col { color: var(--i-text); background: var(--i-bg); width: 135px; opacity: 0.9; }
+th.comment-col { width: 150px; text-align: left; padding-left: 10px; }
+th.del-col { width: 30px; }
+
+td { padding: 0; border-bottom: 0.5px solid var(--border2); vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: #fafaf8; }
+tr:hover td { background: var(--bg3); }
+tr.compact td { padding: 0; }
+tr.hidden-row { display: none; }
 
-.task-cell { display: flex; align-items: center; padding: 8px 6px 8px 14px; }
-.task-input { border: none; background: transparent; font-size: 13px; color: #2c2c2a; width: 100%; outline: none; padding: 3px 5px; border-radius: 4px; }
-.task-input:hover { background: #f1efe8; }
-.task-input:focus { background: #e8f0fb; }
+.project-cell { display: flex; align-items: center; padding: 7px 6px 7px 14px; cursor: grab; }
+.project-cell:active { cursor: grabbing; }
+.drag-handle { color: var(--text4); font-size: 12px; margin-right: 4px; cursor: grab; flex-shrink: 0; }
+.project-input { border: none; background: transparent; font-size: 13px; color: var(--text); width: 100%; outline: none; padding: 2px 4px; border-radius: 4px; }
+.project-input:hover { background: var(--bg3); }
+.project-input:focus { background: var(--bg3); }
 
-.period-cell { text-align: center; padding: 6px 4px; }
-.period-select { border: none; font-size: 11px; font-weight: 500; cursor: pointer; padding: 3px 6px; border-radius: 20px; outline: none; appearance: none; -webkit-appearance: none; text-align: center; background: #f1efe8; color: #5f5e5a; width: 72px; }
-.period-select.done { background: #EAF3DE; color: #27500A; }
-.period-select.h1 { background: #E6F1FB; color: #0C447C; }
-.period-select.q1 { background: #E6F1FB; color: #0C447C; }
-.period-select.q2 { background: #FAEEDA; color: #633806; }
-.period-select.h2 { background: #FBEAF0; color: #72243E; }
-.period-select.y2026 { background: #f1efe8; color: #5f5e5a; }
-.period-select.empty { background: transparent; color: #b4b2a9; }
+.period-cell, .status-cell { text-align: center; padding: 5px 4px; }
+select.period-select, select.status-select, select.r-select {
+  border: none; font-size: 11px; font-weight: 500; cursor: pointer;
+  padding: 3px 5px; border-radius: 20px; outline: none;
+  appearance: none; -webkit-appearance: none; text-align: center; width: 100%;
+}
+.p- { background: transparent; color: var(--text4); }
+.p-Q1 { background: #E6F1FB; color: #0C447C; }
+.p-Q2 { background: #FAEEDA; color: #633806; }
+.p-Q3 { background: #EAF3DE; color: #27500A; }
+.p-Q4 { background: #FBEAF0; color: #72243E; }
+.p-H1 { background: #E6F1FB; color: #0C447C; }
+.p-H2 { background: #FBEAF0; color: #72243E; }
+.p-Y26 { background: var(--bg3); color: var(--text2); }
+.p-DONE { background: #EAF3DE; color: #27500A; }
+.s- { background: transparent; color: var(--text4); }
+.s-not-started { background: var(--ns-bg); color: var(--ns-text); }
+.s-in-progress { background: var(--prog-bg); color: var(--prog-text); }
+.s-done { background: var(--done-bg); color: var(--done-text); }
 
-.r-cell { padding: 6px 8px; text-align: center; }
-.r-select { border: none; font-size: 12px; font-weight: 500; cursor: pointer; padding: 5px 8px; border-radius: 20px; outline: none; appearance: none; -webkit-appearance: none; background: #E6F1FB; color: #0C447C; width: 100%; text-align: center; }
-.r-select.empty { background: transparent; color: #b4b2a9; }
+.r-cell { padding: 5px 7px; text-align: center; }
+.r-select { background: var(--r-bg); color: var(--r-text); font-size: 12px; }
+.r-select.empty { background: transparent; color: var(--text4); }
 
-.multi-cell { padding: 5px 8px; min-height: 42px; }
-.chips-wrap { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; min-height: 30px; padding: 2px; border-radius: 6px; }
-.chips-wrap:hover { background: #f5f4f0; }
-.chip { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.chip-a { background: #FAEEDA; color: #633806; }
-.chip-c { background: #EAF3DE; color: #27500A; }
-.chip-i { background: #FBEAF0; color: #72243E; }
-.chip-x { font-size: 10px; opacity: 0.6; cursor: pointer; margin-left: 1px; }
+.multi-cell { padding: 4px 7px; min-height: 38px; }
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; min-height: 28px; padding: 2px; border-radius: 6px; }
+.chips-wrap:hover { background: var(--bg3); }
+.chip { display: inline-flex; align-items: center; gap: 2px; padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.chip-a { background: var(--a-bg); color: var(--a-text); }
+.chip-c { background: var(--c-bg); color: var(--c-text); }
+.chip-i { background: var(--i-bg); color: var(--i-text); }
+.chip-x { font-size: 9px; opacity: 0.5; cursor: pointer; }
 .chip-x:hover { opacity: 1; }
-.add-chip-btn { font-size: 18px; color: #b4b2a9; line-height: 1; padding: 0 2px; cursor: pointer; }
-.add-chip-btn:hover { color: #2c2c2a; }
+.add-chip-btn { font-size: 16px; color: var(--text4); line-height: 1; padding: 0 2px; cursor: pointer; }
+.add-chip-btn:hover { color: var(--text); }
+
+.comment-cell { padding: 5px 8px; }
+.comment-input { border: none; background: transparent; font-size: 12px; color: var(--text2); width: 100%; outline: none; padding: 2px 4px; border-radius: 4px; resize: none; font-family: inherit; min-height: 28px; }
+.comment-input:hover { background: var(--bg3); }
+.comment-input:focus { background: var(--bg3); }
 
 .del-cell { text-align: center; padding: 4px; }
-.del-btn { opacity: 0; background: none; border: none; cursor: pointer; color: #b4b2a9; font-size: 13px; padding: 4px 6px; border-radius: 4px; }
+.del-btn { opacity: 0; background: none; border: none; cursor: pointer; color: var(--text4); font-size: 12px; padding: 3px 5px; border-radius: 4px; }
 tr:hover .del-btn { opacity: 1; }
 .del-btn:hover { color: #E24B4A; background: #FCEBEB; }
 
+.dragging { opacity: 0.4; }
+.drag-over td { border-top: 2px solid #378ADD; }
+
 .popover-overlay { display: none; position: fixed; inset: 0; z-index: 40; }
 .popover-overlay.open { display: block; }
-.popover { position: fixed; background: #fff; border: 0.5px solid #d3d1c7; border-radius: 10px; padding: 8px; min-width: 170px; z-index: 50; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-.popover-option { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-.popover-option:hover { background: #f1efe8; }
-.pop-av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; flex-shrink: 0; }
-.av-yev { background: #AFA9EC; color: #26215C; }
-.av-ole { background: #5DCAA5; color: #04342C; }
-.av-ale { background: #85B7EB; color: #042C53; }
-.av-ali { background: #F0997B; color: #4A1B0C; }
-.av-kat { background: #FAC775; color: #412402; }
-.av-mgr { background: #D3D1C7; color: #2C2C2A; }
-.pop-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d3d1c7; margin-left: auto; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
-.pop-check.on { background: #2c2c2a; border-color: #2c2c2a; color: #fff; }
+.popover { position: fixed; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 8px; min-width: 180px; z-index: 50; box-shadow: 0 4px 20px rgba(0,0,0,0.12); max-height: 320px; overflow-y: auto; }
+.popover-option { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text); }
+.popover-option:hover { background: var(--bg3); }
+.pop-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 500; flex-shrink: 0; }
+.pop-check { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid var(--border); margin-left: auto; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; }
+.pop-check.on { background: var(--text); border-color: var(--text); color: var(--bg2); }
+.pop-divider { border: none; border-top: 0.5px solid var(--border2); margin: 4px 0; }
+.pop-add-person { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--text3); }
+.pop-add-person:hover { background: var(--bg3); color: var(--text); }
 
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 60; align-items: center; justify-content: center; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 60; align-items: center; justify-content: center; }
 .overlay.open { display: flex; }
-.modal { background: #fff; border-radius: 14px; padding: 24px; width: 320px; border: 0.5px solid #d3d1c7; }
-.modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 14px; }
-.modal label { font-size: 12px; color: #5f5e5a; display: block; margin-bottom: 4px; margin-top: 12px; }
-.modal input { width: 100%; padding: 8px 10px; border: 0.5px solid #b4b2a9; border-radius: 8px; font-size: 13px; outline: none; }
+.modal { background: var(--bg2); border-radius: 14px; padding: 24px; width: 320px; border: 0.5px solid var(--border); }
+.modal h3 { font-size: 15px; font-weight: 500; margin-bottom: 14px; color: var(--text); }
+.modal label { font-size: 12px; color: var(--text3); display: block; margin-bottom: 4px; margin-top: 12px; }
+.modal input { width: 100%; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: var(--bg); color: var(--text); }
 .modal input:focus { border-color: #378ADD; }
 .modal-btns { display: flex; gap: 8px; margin-top: 18px; justify-content: flex-end; }
-.modal-btns button { padding: 7px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 0.5px solid #b4b2a9; background: #fff; }
-.modal-btns .ok { background: #2c2c2a; color: #fff; border-color: #2c2c2a; }
+.modal-btns button { padding: 7px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border); background: var(--bg2); color: var(--text); }
+.modal-btns .ok { background: var(--text); color: var(--bg2); border-color: var(--text); }
 
-footer { font-size: 11px; color: #b4b2a9; margin-top: 32px; }
+footer { font-size: 11px; color: var(--text4); margin-top: 24px; }
 </style>
 </head>
 <body>
@@ -126,13 +197,23 @@ footer { font-size: 11px; color: #b4b2a9; margin-top: 32px; }
     <h1>RACI Matrix — HR Team 2026</h1>
     <p>Quarks · розподіл відповідальності по проєктах</p>
   </div>
-  <div class="raci-legend">
-    <div class="raci-pill r"><span class="dot"></span>R — виконавець</div>
-    <div class="raci-pill a"><span class="dot"></span>A — відповідальний</div>
-    <div class="raci-pill c"><span class="dot"></span>C — консультує</div>
-    <div class="raci-pill i"><span class="dot"></span>I — проінформований</div>
+  <div class="header-right">
+    <div class="raci-legend">
+      <div class="raci-pill r"><span class="dot"></span>R — виконавець</div>
+      <div class="raci-pill a"><span class="dot"></span>A — відповідальний</div>
+      <div class="raci-pill c"><span class="dot"></span>C — консультує</div>
+      <div class="raci-pill i"><span class="dot"></span>I — проінформований</div>
+    </div>
+    <button class="icon-btn" onclick="toggleTheme(this)" id="theme-btn">Темна</button>
   </div>
 </div>
+
+<div class="search-bar">
+  <input class="search-input" type="text" placeholder="Пошук по проєктах..." oninput="doSearch(this.value)" />
+  <span class="update-label" id="update-label">Оновлено: —</span>
+</div>
+
+<div class="people-load" id="people-load"></div>
 
 <div class="toolbar">
   <button class="filter-btn active" onclick="setFilter('all',this)">Всі</button>
@@ -141,245 +222,341 @@ footer { font-size: 11px; color: #b4b2a9; margin-top: 32px; }
   <button class="filter-btn" onclick="setFilter('growth',this)">Growth Hub</button>
   <button class="filter-btn" onclick="setFilter('pr',this)">PR & Compensation</button>
   <button class="filter-btn" onclick="setFilter('metrics',this)">People Metrics</button>
-  <button class="add-section-btn" onclick="openSecModal()">+ Новий трек</button>
+  <div class="toolbar-right">
+    <button class="icon-btn" onclick="toggleCompact(this)">Компактно</button>
+    <button class="icon-btn" onclick="openSecModal()">+ Трек</button>
+    <button class="icon-btn" onclick="printPDF()">PDF</button>
+    <button class="icon-btn active" onclick="saveFile()">Зберегти HTML</button>
+  </div>
 </div>
 
 <div id="app"></div>
-<footer>Оновлено: березень 2026 · Quarks HR Team</footer>
+<footer id="footer-label">Quarks HR Team · 2026</footer>
 
 <div class="popover-overlay" id="pop-overlay" onclick="closePopover()"></div>
 <div class="popover" id="popover" style="display:none"></div>
 
 <div class="overlay" id="sec-modal">
-  <div class="modal">
-    <h3>Новий трек</h3>
-    <label>Назва треку</label>
-    <input id="sec-name" type="text" placeholder="Наприклад: Recruitment" />
-    <div class="modal-btns">
-      <button onclick="closeSecModal()">Скасувати</button>
-      <button class="ok" onclick="addSection()">Додати</button>
-    </div>
+  <div class="modal"><h3>Новий трек</h3>
+    <label>Назва</label><input id="sec-name" type="text" placeholder="Наприклад: Recruitment" />
+    <div class="modal-btns"><button onclick="closeSecModal()">Скасувати</button><button class="ok" onclick="addSection()">Додати</button></div>
   </div>
 </div>
-
 <div class="overlay" id="row-modal">
-  <div class="modal">
-    <h3>Новий проєкт</h3>
-    <label>Назва</label>
-    <input id="row-name" type="text" placeholder="Наприклад: Onboarding redesign" />
-    <div class="modal-btns">
-      <button onclick="closeRowModal()">Скасувати</button>
-      <button class="ok" onclick="addRow()">Додати</button>
-    </div>
+  <div class="modal"><h3>Новий проєкт</h3>
+    <label>Назва</label><input id="row-name" type="text" placeholder="Наприклад: Onboarding redesign" />
+    <div class="modal-btns"><button onclick="closeRowModal()">Скасувати</button><button class="ok" onclick="addRow()">Додати</button></div>
+  </div>
+</div>
+<div class="overlay" id="person-modal">
+  <div class="modal"><h3>Додати людину</h3>
+    <label>Ім'я</label><input id="person-name" type="text" placeholder="Наприклад: Марія" />
+    <div class="modal-btns"><button onclick="closePersonModal()">Скасувати</button><button class="ok" onclick="confirmAddPerson()">Додати</button></div>
   </div>
 </div>
 
 <script>
-const PEOPLE = [
-  { key:'yev', label:'Євгенія',   cls:'av-yev', init:'Є'  },
-  { key:'ole', label:'Олена',     cls:'av-ole', init:'О'  },
-  { key:'ale', label:'Олексій',   cls:'av-ale', init:'Ол' },
-  { key:'ali', label:'Аліна',     cls:'av-ali', init:'А'  },
-  { key:'kat', label:'Катерина',  cls:'av-kat', init:'К'  },
-  { key:'mgr', label:'Менеджери', cls:'av-mgr', init:'М'  },
+const AV_COLORS = [
+  {bg:'#AFA9EC',fg:'#26215C'},{bg:'#5DCAA5',fg:'#04342C'},{bg:'#85B7EB',fg:'#042C53'},
+  {bg:'#F0997B',fg:'#4A1B0C'},{bg:'#FAC775',fg:'#412402'},{bg:'#D3D1C7',fg:'#2C2C2A'},
+  {bg:'#F4C0D1',fg:'#72243E'},{bg:'#C0DD97',fg:'#27500A'},{bg:'#B5D4F4',fg:'#185FA5'},
 ];
 
-const PERIODS = ['', 'Q1', 'Q2', 'H1', 'H2', 'Y2026', 'DONE'];
-const PERIOD_CLS = { 'Q1':'q1','Q2':'q2','H1':'h1','H2':'h2','Y2026':'y2026','DONE':'done','':"empty" };
+let people = [
+  {key:'yev',label:'Євгенія',init:'Є'},
+  {key:'ole',label:'Олена',init:'О'},
+  {key:'ale',label:'Олексій',init:'Ол'},
+  {key:'ali',label:'Аліна',init:'А'},
+  {key:'kat',label:'Катерина',init:'К'},
+  {key:'mgr',label:'Менеджери',init:'М'},
+];
 
-const emptyRow = (task='') => ({ task, period:'', r:'', a:[], c:[], i:[] });
+const PERIODS=['','Q1','Q2','Q3','Q4','H1','H2','Y26','DONE'];
+const STATUSES=['','not-started','in-progress','done'];
+const SL={'':'—','not-started':'Not started','in-progress':'In progress','done':'Done'};
+const emptyRow=(t='')=>({task:t,period:'',status:'',r:'',a:[],c:[],i:[],comment:''});
 
-let data = [
-  { id:'ai', title:'AI', rows:[
-    { task:'AI-інструменти в HR',               period:'H2',   r:'ale', a:['yev'], c:[],           i:['kat','mgr'] },
+let data=[
+  {id:'ai',title:'AI',rows:[
+    {task:'AI-інструменти в HR',period:'H2',status:'not-started',r:'ale',a:['yev'],c:[],i:['kat','mgr'],comment:''},
   ]},
-  { id:'ld', title:'L&D', rows:[
-    { task:'L&D стратегія 2026',                period:'DONE', r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Competency matrix для менеджерів',  period:'Q1',   r:'ole', a:['yev'], c:['kat','mgr'], i:[] },
-    { task:'L&D програма для менеджерів',       period:'Q2',   r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Менторська програма',               period:'Q2',   r:'ali', a:['yev'], c:['mgr'],       i:['kat'] },
+  {id:'ld',title:'L&D',rows:[
+    {task:'L&D стратегія 2026',period:'DONE',status:'done',r:'ali',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Competency matrix для менеджерів',period:'Q1',status:'in-progress',r:'ole',a:['yev'],c:['kat','mgr'],i:[],comment:''},
+    {task:'L&D програма для менеджерів',period:'Q2',status:'not-started',r:'ali',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Менторська програма',period:'Q2',status:'not-started',r:'ali',a:['yev'],c:['mgr'],i:['kat'],comment:''},
   ]},
-  { id:'growth', title:'Growth Hub', rows:[
-    { task:'Перехід на нову платформу',         period:'Q1',   r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
-    { task:'Матриця ключових ролей',            period:'Q2',   r:'yev', a:['kat'], c:['mgr'],       i:[] },
-    { task:'Матриця менеджерів + грейди',       period:'Q2',   r:'ole', a:['yev'], c:['mgr'],       i:['kat'] },
-    { task:'Оновлення Performance Cycle',       period:'Q2',   r:'ali', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Salary philosophy',                 period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Аналіз compa ratio',                period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Карта мотивації співробітників',    period:'Q2',   r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
+  {id:'growth',title:'Growth Hub',rows:[
+    {task:'Перехід на нову платформу',period:'Q1',status:'in-progress',r:'yev',a:['kat'],c:['ole'],i:['mgr'],comment:''},
+    {task:'Матриця ключових ролей',period:'Q2',status:'not-started',r:'yev',a:['kat'],c:['mgr'],i:[],comment:''},
+    {task:'Матриця менеджерів + грейди',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['mgr'],i:['kat'],comment:''},
+    {task:'Оновлення Performance Cycle',period:'Q2',status:'not-started',r:'ali',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Salary philosophy',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Аналіз compa ratio',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Карта мотивації співробітників',period:'Q2',status:'not-started',r:'yev',a:['kat'],c:['ole'],i:['mgr'],comment:''},
   ]},
-  { id:'pr', title:'PR & Compensation', rows:[
-    { task:'Culture fit блок',                  period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Метрики performance review',        period:'Q2',   r:'ole', a:['yev'], c:[],            i:['kat','mgr'] },
-    { task:'Інструменти performance review',    period:'Q2',   r:'ole', a:['yev'], c:['kat'],       i:['mgr'] },
-    { task:'Performance Upgrade',               period:'Q2',   r:'ole', a:['yev'], c:['kat','mgr'], i:[] },
+  {id:'pr',title:'PR & Compensation',rows:[
+    {task:'Culture fit блок',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Метрики performance review',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:[],i:['kat','mgr'],comment:''},
+    {task:'Інструменти performance review',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['kat'],i:['mgr'],comment:''},
+    {task:'Performance Upgrade',period:'Q2',status:'not-started',r:'ole',a:['yev'],c:['kat','mgr'],i:[],comment:''},
   ]},
-  { id:'metrics', title:'People Metrics', rows:[
-    { task:'eNPS — моніторинг та аналіз',       period:'Y2026',r:'yev', a:['kat'], c:['ole'],       i:['mgr'] },
-    { task:'Employee Retention ≥92%',           period:'Y2026',r:'yev', a:['kat'], c:['ole','ali'], i:['mgr'] },
-    { task:'Probation Success Rate ≥85%',       period:'Y2026',r:'ali', a:['yev'], c:[],            i:['kat','mgr'] },
-    { task:'HR health matrix',                  period:'Q2',   r:'ale', a:['yev'], c:['kat'],       i:['mgr'] },
+  {id:'metrics',title:'People Metrics',rows:[
+    {task:'eNPS — моніторинг та аналіз',period:'Y26',status:'in-progress',r:'yev',a:['kat'],c:['ole'],i:['mgr'],comment:''},
+    {task:'Employee Retention ≥92%',period:'Y26',status:'in-progress',r:'yev',a:['kat'],c:['ole','ali'],i:['mgr'],comment:''},
+    {task:'Probation Success Rate ≥85%',period:'Y26',status:'in-progress',r:'ali',a:['yev'],c:[],i:['kat','mgr'],comment:''},
+    {task:'HR health matrix',period:'Q2',status:'not-started',r:'ale',a:['yev'],c:['kat'],i:['mgr'],comment:''},
   ]},
 ];
 
-let currentFilter = 'all';
-let pendingRowSIdx = null;
-let popoverCtx = null;
+let currentFilter='all', compactMode=false, popoverCtx=null, pendingRowSIdx=null;
+let dragSrc=null, dragSiSrc=null, dragRiSrc=null;
 
-function personByKey(k) { return PEOPLE.find(p => p.key === k); }
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const pb=k=>people.find(p=>p.key===k);
+const avStyle=idx=>{const c=AV_COLORS[idx%AV_COLORS.length];return `background:${c.bg};color:${c.fg}`;};
+const pidx=k=>people.findIndex(p=>p.key===k);
 
-function renderChips(arr, role, si, ri) {
-  const chipCls = { a:'chip-a', c:'chip-c', i:'chip-i' }[role];
-  let html = '';
-  arr.forEach((k, idx) => {
-    const p = personByKey(k);
-    if (!p) return;
-    html += `<span class="chip ${chipCls}">${p.label}<span class="chip-x" onclick="removeChip(event,${si},${ri},'${role}',${idx})">✕</span></span>`;
-  });
-  html += `<span class="add-chip-btn" onclick="openPopover(event,${si},${ri},'${role}')">+</span>`;
-  return html;
-}
-
-function buildRow(si, ri, row) {
-  let rOpts = `<option value="">—</option>`;
-  PEOPLE.forEach(p => { rOpts += `<option value="${p.key}" ${row.r===p.key?'selected':''}>${p.label}</option>`; });
-
-  let pOpts = PERIODS.map(p => `<option value="${p}" ${row.period===p?'selected':''}>${p||'—'}</option>`).join('');
-  const pc = PERIOD_CLS[row.period] || 'empty';
-
-  return `<tr>
-    <td><div class="task-cell"><input class="task-input" value="${esc(row.task)}" oninput="data[${si}].rows[${ri}].task=this.value" placeholder="Проєкт…"/></div></td>
-    <td class="period-cell"><select class="period-select ${pc}" onchange="setPeriod(${si},${ri},this.value,this)">${pOpts}</select></td>
-    <td class="r-cell"><select class="r-select ${row.r?'':'empty'}" onchange="setR(${si},${ri},this.value,this)">${rOpts}</select></td>
-    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-a">${renderChips(row.a,'a',si,ri)}</div></td>
-    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-c">${renderChips(row.c,'c',si,ri)}</div></td>
-    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-i">${renderChips(row.i,'i',si,ri)}</div></td>
-    <td class="del-cell"><button class="del-btn" onclick="delRow(${si},${ri})">✕</button></td>
-  </tr>`;
-}
-
-function render() {
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  data.forEach((sec, si) => {
-    if (currentFilter !== 'all' && sec.id !== currentFilter) return;
-    const div = document.createElement('div');
-    div.className = 'section';
-    div.dataset.section = sec.id;
-    const rows = sec.rows.map((row, ri) => buildRow(si, ri, row)).join('');
-    div.innerHTML = `
-      <div class="section-header">
-        <input class="section-title-edit" value="${esc(sec.title)}" oninput="data[${si}].title=this.value" />
-        <button class="add-row-btn" onclick="openRowModal(${si})">+ проєкт</button>
+function renderLoad(){
+  const counts={};
+  people.forEach(p=>{counts[p.key]=0;});
+  data.forEach(sec=>sec.rows.forEach(row=>{
+    if(row.r) counts[row.r]=(counts[row.r]||0)+1;
+    ['a','c','i'].forEach(role=>row[role].forEach(k=>{counts[k]=(counts[k]||0)+0.3;}));
+  }));
+  const max=Math.max(...Object.values(counts),1);
+  document.getElementById('people-load').innerHTML=people.map((p,i)=>{
+    const n=Math.round(counts[p.key]||0);
+    const pct=Math.min(100,Math.round((counts[p.key]||0)/max*100));
+    const cls=pct>80?'over':pct>60?'warn':'';
+    return `<div class="person-load">
+      <div class="pl-av" style="${avStyle(i)}">${p.init}</div>
+      <div>
+        <div style="display:flex;gap:4px;align-items:center">
+          <span class="pl-name">${p.label}</span>
+          <span class="pl-count">${n}R</span>
+        </div>
+        <div class="pl-bar"><div class="pl-fill ${cls}" style="width:${pct}%"></div></div>
       </div>
-      <table>
-        <thead><tr>
-          <th class="task-col">Проєкт</th>
-          <th class="period-col">Період</th>
-          <th class="r-col">R — виконавець</th>
-          <th class="a-col">A — відповідальний</th>
-          <th class="c-col">C — консультує</th>
-          <th class="i-col">I — проінформований</th>
-          <th class="del-col"></th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`;
-    app.appendChild(div);
-  });
-}
-
-function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-function setPeriod(si, ri, val, sel) {
-  data[si].rows[ri].period = val;
-  sel.className = `period-select ${PERIOD_CLS[val]||'empty'}`;
-}
-
-function setR(si, ri, val, sel) {
-  data[si].rows[ri].r = val;
-  sel.className = 'r-select' + (val ? '' : ' empty');
-}
-
-function removeChip(e, si, ri, role, idx) {
-  e.stopPropagation();
-  data[si].rows[ri][role].splice(idx, 1);
-  const wrap = document.getElementById(`chips-${si}-${ri}-${role}`);
-  if (wrap) wrap.innerHTML = renderChips(data[si].rows[ri][role], role, si, ri);
-}
-
-function openPopover(e, si, ri, role) {
-  e.stopPropagation();
-  popoverCtx = { si, ri, role };
-  const pop = document.getElementById('popover');
-  renderPopover();
-  const rect = e.target.getBoundingClientRect();
-  pop.style.display = 'block';
-  pop.style.top = (rect.bottom + 4) + 'px';
-  pop.style.left = Math.min(rect.left, window.innerWidth - 190) + 'px';
-  document.getElementById('pop-overlay').classList.add('open');
-}
-
-function renderPopover() {
-  if (!popoverCtx) return;
-  const { si, ri, role } = popoverCtx;
-  const current = data[si].rows[ri][role];
-  document.getElementById('popover').innerHTML = PEOPLE.map(p => {
-    const sel = current.includes(p.key);
-    return `<div class="popover-option" onclick="toggleChip('${p.key}')">
-      <div class="pop-av ${p.cls}">${p.init}</div>
-      <span>${p.label}</span>
-      <div class="pop-check ${sel?'on':''}">${sel?'✓':''}</div>
     </div>`;
   }).join('');
 }
 
-function toggleChip(key) {
-  if (!popoverCtx) return;
-  const { si, ri, role } = popoverCtx;
-  const arr = data[si].rows[ri][role];
-  const idx = arr.indexOf(key);
-  if (idx >= 0) arr.splice(idx, 1); else arr.push(key);
+function sectionProgress(sec){
+  const total=sec.rows.length;
+  if(!total) return {done:0,total:0,pct:0};
+  const done=sec.rows.filter(r=>r.status==='done').length;
+  return {done,total,pct:Math.round(done/total*100)};
+}
+
+function renderChips(arr,role,si,ri){
+  const cc={a:'chip-a',c:'chip-c',i:'chip-i'}[role];
+  let h='';
+  arr.forEach((k,idx)=>{
+    const p=pb(k); if(!p) return;
+    h+=`<span class="chip ${cc}">${p.label}<span class="chip-x" onclick="removeChip(event,${si},${ri},'${role}',${idx})">✕</span></span>`;
+  });
+  h+=`<span class="add-chip-btn" onclick="openPopover(event,${si},${ri},'${role}')">+</span>`;
+  return h;
+}
+
+function buildRow(si,ri,row){
+  let rOpts=`<option value="">—</option>`;
+  people.forEach(p=>{rOpts+=`<option value="${p.key}" ${row.r===p.key?'selected':''}>${p.label}</option>`;});
+  const pOpts=PERIODS.map(p=>`<option value="${p}" ${row.period===p?'selected':''}>${p||'—'}</option>`).join('');
+  const sOpts=STATUSES.map(s=>`<option value="${s}" ${row.status===s?'selected':''}>${SL[s]}</option>`).join('');
+  return `<tr draggable="true" ondragstart="dragStart(event,${si},${ri})" ondragover="dragOver(event,${si},${ri})" ondrop="dragDrop(event,${si},${ri})" ondragleave="dragLeave(event)">
+    <td><div class="project-cell"><span class="drag-handle">⠿</span><input class="project-input" value="${esc(row.task)}" oninput="data[${si}].rows[${ri}].task=this.value" placeholder="Проєкт…"/></div></td>
+    <td class="period-cell"><select class="period-select p-${row.period||''}" onchange="setPeriod(${si},${ri},this.value,this)">${pOpts}</select></td>
+    <td class="status-cell"><select class="status-select s-${row.status||''}" onchange="setStatus(${si},${ri},this.value,this)">${sOpts}</select></td>
+    <td class="r-cell"><select class="r-select ${row.r?'':'empty'}" onchange="setR(${si},${ri},this.value,this)">${rOpts}</select></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-a">${renderChips(row.a,'a',si,ri)}</div></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-c">${renderChips(row.c,'c',si,ri)}</div></td>
+    <td class="multi-cell"><div class="chips-wrap" id="chips-${si}-${ri}-i">${renderChips(row.i,'i',si,ri)}</div></td>
+    <td class="comment-cell"><textarea class="comment-input" rows="1" oninput="data[${si}].rows[${ri}].comment=this.value;autoResize(this)" placeholder="Коментар…">${esc(row.comment||'')}</textarea></td>
+    <td class="del-cell"><button class="del-btn" onclick="delRow(${si},${ri})">✕</button></td>
+  </tr>`;
+}
+
+function render(){
+  const app=document.getElementById('app');
+  app.innerHTML='';
+  data.forEach((sec,si)=>{
+    if(currentFilter!=='all'&&sec.id!==currentFilter) return;
+    const div=document.createElement('div');
+    div.className='section'; div.dataset.section=sec.id;
+    const rows=sec.rows.map((row,ri)=>buildRow(si,ri,row)).join('');
+    const pg=sectionProgress(sec);
+    div.innerHTML=`
+      <div class="section-header">
+        <input class="section-title-edit" value="${esc(sec.title)}" oninput="data[${si}].title=this.value"/>
+        <button class="add-row-btn" onclick="openRowModal(${si})">+ проєкт</button>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pg.pct}%"></div></div>
+          <span class="progress-label">${pg.done}/${pg.total} done</span>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr>
+          <th class="project-col">Проєкт</th>
+          <th class="period-col">Період</th>
+          <th class="status-col">Статус</th>
+          <th class="r-col">R — виконавець</th>
+          <th class="a-col">A — відповідальний</th>
+          <th class="c-col">C — консультує</th>
+          <th class="i-col">I — проінформований</th>
+          <th class="comment-col">Коментарі</th>
+          <th class="del-col"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>`;
+    app.appendChild(div);
+  });
+  if(compactMode) document.querySelectorAll('tbody tr').forEach(r=>r.classList.add('compact'));
+  renderLoad();
+}
+
+function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function setPeriod(si,ri,v,s){data[si].rows[ri].period=v;s.className=`period-select p-${v||''}`;}
+function setStatus(si,ri,v,s){data[si].rows[ri].status=v;s.className=`status-select s-${v||''}`;renderLoad();}
+function setR(si,ri,v,s){data[si].rows[ri].r=v;s.className='r-select'+(v?'':' empty');renderLoad();}
+
+function removeChip(e,si,ri,role,idx){
+  e.stopPropagation();
+  data[si].rows[ri][role].splice(idx,1);
+  const w=document.getElementById(`chips-${si}-${ri}-${role}`);
+  if(w) w.innerHTML=renderChips(data[si].rows[ri][role],role,si,ri);
+  renderLoad();
+}
+
+function openPopover(e,si,ri,role){
+  e.stopPropagation();
+  popoverCtx={si,ri,role};
   renderPopover();
-  const wrap = document.getElementById(`chips-${si}-${ri}-${role}`);
-  if (wrap) wrap.innerHTML = renderChips(arr, role, si, ri);
+  const pop=document.getElementById('popover');
+  const rect=e.target.getBoundingClientRect();
+  pop.style.display='block';
+  pop.style.top=(rect.bottom+4)+'px';
+  pop.style.left=Math.min(rect.left,window.innerWidth-200)+'px';
+  document.getElementById('pop-overlay').classList.add('open');
 }
 
-function closePopover() {
-  document.getElementById('popover').style.display = 'none';
+function renderPopover(){
+  if(!popoverCtx) return;
+  const{si,ri,role}=popoverCtx;
+  const cur=data[si].rows[ri][role];
+  let h=people.map((p,i)=>{
+    const s=cur.includes(p.key);
+    return `<div class="popover-option" onclick="toggleChip('${p.key}')">
+      <div class="pop-av" style="${avStyle(i)}">${p.init}</div>
+      <span>${p.label}</span>
+      <div class="pop-check ${s?'on':''}">${s?'✓':''}</div>
+    </div>`;
+  }).join('');
+  h+=`<hr class="pop-divider"><div class="pop-add-person" onclick="openPersonModal()">+ Додати людину</div>`;
+  document.getElementById('popover').innerHTML=h;
+}
+
+function toggleChip(key){
+  if(!popoverCtx) return;
+  const{si,ri,role}=popoverCtx;
+  const arr=data[si].rows[ri][role];
+  const idx=arr.indexOf(key);
+  if(idx>=0) arr.splice(idx,1); else arr.push(key);
+  renderPopover();
+  const w=document.getElementById(`chips-${si}-${ri}-${role}`);
+  if(w) w.innerHTML=renderChips(arr,role,si,ri);
+  renderLoad();
+}
+
+function closePopover(){
+  document.getElementById('popover').style.display='none';
   document.getElementById('pop-overlay').classList.remove('open');
-  popoverCtx = null;
+  popoverCtx=null;
 }
 
-function delRow(si, ri) { data[si].rows.splice(ri, 1); render(); }
+function delRow(si,ri){data[si].rows.splice(ri,1);render();}
+function setFilter(key,btn){currentFilter=key;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+function toggleCompact(btn){compactMode=!compactMode;btn.classList.toggle('active');render();}
+function toggleTheme(btn){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  btn.textContent=isDark?'Темна':'Світла';
+}
 
-function setFilter(key, btn) {
-  currentFilter = key;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+function doSearch(q){
+  const term=q.toLowerCase().trim();
+  document.querySelectorAll('tbody tr').forEach(tr=>{
+    const input=tr.querySelector('.project-input');
+    if(!input) return;
+    tr.classList.toggle('hidden-row',!!term&&!input.value.toLowerCase().includes(term));
+  });
+}
+
+// Drag & drop
+function dragStart(e,si,ri){dragSiSrc=si;dragRiSrc=ri;e.currentTarget.classList.add('dragging');}
+function dragOver(e,si,ri){e.preventDefault();if(si===dragSiSrc&&ri!==dragRiSrc) e.currentTarget.classList.add('drag-over');}
+function dragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function dragDrop(e,si,ri){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(dragSiSrc===null||dragRiSrc===null||dragSiSrc!==si||dragRiSrc===ri) return;
+  const rows=data[si].rows;
+  const [moved]=rows.splice(dragRiSrc,1);
+  rows.splice(ri,0,moved);
+  dragSiSrc=null;dragRiSrc=null;
   render();
 }
 
-function openSecModal() { document.getElementById('sec-name').value=''; document.getElementById('sec-modal').classList.add('open'); }
-function closeSecModal() { document.getElementById('sec-modal').classList.remove('open'); }
-function addSection() {
-  const name = document.getElementById('sec-name').value.trim();
-  if (!name) return;
-  data.push({ id:'sec_'+Date.now(), title:name, rows:[emptyRow('Новий проєкт')] });
+function printPDF(){
+  window.print();
+}
+
+function saveFile(){
+  const now=new Date();
+  const label=now.toLocaleDateString('uk-UA',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('update-label').textContent='Оновлено: '+label;
+  setTimeout(()=>{
+    const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    const blob=new Blob([html],{type:'text/html'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='raci_matrix.html';
+    a.click();
+  },100);
+}
+
+function openSecModal(){document.getElementById('sec-name').value='';document.getElementById('sec-modal').classList.add('open');}
+function closeSecModal(){document.getElementById('sec-modal').classList.remove('open');}
+function addSection(){
+  const name=document.getElementById('sec-name').value.trim();
+  if(!name) return;
+  data.push({id:'sec_'+Date.now(),title:name,rows:[emptyRow('Новий проєкт')]});
   closeSecModal();
-  setFilter('all', document.querySelector('.filter-btn'));
+  setFilter('all',document.querySelector('.filter-btn'));
 }
 
-function openRowModal(si) { pendingRowSIdx=si; document.getElementById('row-name').value=''; document.getElementById('row-modal').classList.add('open'); }
-function closeRowModal() { document.getElementById('row-modal').classList.remove('open'); }
-function addRow() {
-  const name = document.getElementById('row-name').value.trim() || 'Новий проєкт';
+function openRowModal(si){pendingRowSIdx=si;document.getElementById('row-name').value='';document.getElementById('row-modal').classList.add('open');}
+function closeRowModal(){document.getElementById('row-modal').classList.remove('open');}
+function addRow(){
+  const name=document.getElementById('row-name').value.trim()||'Новий проєкт';
   data[pendingRowSIdx].rows.push(emptyRow(name));
-  closeRowModal();
-  render();
+  closeRowModal();render();
 }
 
-document.getElementById('sec-modal').addEventListener('click', e => { if(e.target===document.getElementById('sec-modal')) closeSecModal(); });
-document.getElementById('row-modal').addEventListener('click', e => { if(e.target===document.getElementById('row-modal')) closeRowModal(); });
+function openPersonModal(){document.getElementById('person-name').value='';document.getElementById('person-modal').classList.add('open');}
+function closePersonModal(){document.getElementById('person-modal').classList.remove('open');}
+function confirmAddPerson(){
+  const name=document.getElementById('person-name').value.trim();
+  if(!name) return;
+  people.push({key:'p_'+Date.now(),label:name,init:name.slice(0,2)});
+  closePersonModal();
+  renderPopover();render();
+}
+
+['sec-modal','row-modal','person-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id)) document.getElementById(id).classList.remove('open');});
+});
 
 render();
 </script>
